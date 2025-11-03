@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <!-- Meta Tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jogo de Luta 2D - Projeto com POO em JavaScript">
+  <meta name="author" content="Seu Nome">
+  
+  <title>Samurai Jack</title>
+  
+  <!-- Favicon (Opcional) -->
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Container Principal do Jogo -->
+  <div class="game-container">
+    
+    <!-- Interface do Usuário (UI) -->
+    <div class="ui-overlay">
+      
+      <!-- Barras de Vida e Timer -->
+      <div class="health-bars">
+        
+        <!-- Jogador 1 -->
+        <div class="player-health-container">
+          <div class="player-info">
+            <span class="player-name">Samurai X</span>
+            <span class="player-health-text">100%</span>
+          </div>
+          <div class="health-bar-wrapper">
+            <div id="playerHealth" class="health-bar player"></div>
+          </div>
+        </div>
+        
+        <!-- Timer Central -->
+        <div class="timer-container">
+          <span class="timer-label">TEMPO</span>
+          <div id="timer" class="timer">60</div>
+        </div>
+        
+        <!-- Jogador 2 (Inimigo) -->
+        <div class="enemy-health-container">
+          <div class="enemy-info">
+            <span class="enemy-health-text">100%</span>
+            <span class="enemy-name">Kenji</span>
+          </div>
+          <div class="health-bar-wrapper">
+            <div id="enemyHealth" class="health-bar enemy"></div>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+
+    <!-- Canvas do Jogo -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Tela de Resultado -->
+    <div id="result" class="result-screen">
+      <div class="result-content">
+        <h1 class="result-text"></h1>
+        <button id="restartButton" class="restart-button">Jogar Novamente</button>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- Scripts Externos -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" 
+          integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug==" 
+          crossorigin="anonymous" 
+          referrerpolicy="no-referrer"></script>
+
+  <!-- Scripts do Projeto (ordem de dependência) -->
+  <script src="src/classes/Entidade.js"></script>
+  <script src="src/classes/Jogador.js"></script>
+  <script src="src/classes/Inimigo.js"></script>
+  <script src="src/classes/Boss.js"></script>
+  <script src="src/utils/Utils.js"></script>
+  <script src="src/main.js"></script>
+  
+</body>
+
+</html>
