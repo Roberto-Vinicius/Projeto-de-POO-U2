@@ -79,3 +79,4 @@ Reduza a barra de vida do oponente a 0 antes que o tempo acabe. Se o cronômetro
 - Acrescentar sons de impacto, trilha sonora e feedbacks visuais adicionais.
 - Implementar novos golpes, defesa e variações de combo.
 - Criar sistema de fases com múltiplos cenários e chefes encadeados.
+# Projeto-de-POO-U2
