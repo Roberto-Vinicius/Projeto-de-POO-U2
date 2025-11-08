@@ -193,7 +193,7 @@ Este projeto continuará sendo desenvolvido com as seguintes funcionalidades pla
 ## 👨‍💻 Autor
 
 **Roberto Vinicius Dantas Batista**
-- Curso: [Seu curso]
+- Curso: Ciência e Tecnologia (CeT)
 - Instituição: Universidade Federal do Rio Grande do Norte (UFRN)
 - Disciplina: Programação Orientada a Objetos
 
