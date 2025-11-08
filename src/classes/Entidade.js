@@ -4,7 +4,7 @@ class Entidade {
   #velocidade;
   #estaAtacando;
 
-  constructor({ posicao, imagemSrc, escala = 1, framesMax = 1, deslocamento = { x: 0, y: 0 } }) {
+  constructor({ posicao, imagemSrc, escala = 1, framesMax = 1, deslocamento = { x: 0, y: 0 }, vidaMaxima = 100 }) {
     this.posicao = posicao;
     this.altura = 150;
     this.largura = 50;
@@ -17,7 +17,8 @@ class Entidade {
     this.framesDecorridos = 0;
     this.framesParaSegurar = 6;
     
-    this.#vida = 100;
+    this.vidaMaxima = Math.max(0, vidaMaxima);
+    this.#vida = this.vidaMaxima;
     this.#velocidade = { x: 0, y: 0 };
     this.#estaAtacando = false;
 
@@ -30,7 +31,8 @@ class Entidade {
   }
 
   set vida(valor) {
-    this.#vida = Math.max(0, Math.min(100, valor));
+    const limiteSuperior = typeof this.vidaMaxima === 'number' && this.vidaMaxima > 0 ? this.vidaMaxima : 100;
+    this.#vida = Math.max(0, Math.min(limiteSuperior, valor));
   }
 
   // REQUISITO: 3 pares de métodos get() e set() (Par 2)

@@ -1,6 +1,3 @@
-// REQUISITO: Sistema de Menu e Navegação entre Telas
-// Arquivo: src/utils/Menu.js
-
 class MenuManager {
   constructor() {
     this.telaAbertura = null;
@@ -22,6 +19,7 @@ class MenuManager {
     // Configura event listeners
     this.configurarBotoes();
     this.configurarTeclado();
+    this.inicializarAudioTema();
 
     console.log('MenuManager inicializado com sucesso!');
   }
@@ -71,6 +69,20 @@ class MenuManager {
     }
   }
 
+  inicializarAudioTema() {
+    if (typeof TrilhaTema === 'undefined') {
+      return;
+    }
+
+    const tentarTocar = () => {
+      TrilhaTema.tocar();
+    };
+
+    tentarTocar();
+    document.addEventListener('click', tentarTocar, { once: true });
+    document.addEventListener('keydown', tentarTocar, { once: true });
+  }
+
   // REQUISITO: Configura controles de teclado
   configurarTeclado() {
     document.addEventListener('keydown', (e) => {
@@ -92,6 +104,14 @@ class MenuManager {
   iniciarJogo() {
     console.log('Iniciando jogo...');
     
+    if (typeof TrilhaTema !== 'undefined') {
+      if (typeof TrilhaTema.forcarTocar === 'function') {
+        TrilhaTema.forcarTocar();
+      } else {
+        TrilhaTema.tocar();
+      }
+    }
+
     // Esconde tela de abertura
     if (this.telaAbertura) {
       this.telaAbertura.style.display = 'none';
@@ -150,11 +170,9 @@ class MenuManager {
     this.limparCanvas();
   }
 
-  // REQUISITO: Reinicia o jogo completamente
   reiniciarJogo() {
     console.log('Reiniciando jogo...');
     
-    // Esconde telas de resultado
     if (this.telaResultado) {
       this.telaResultado.style.display = 'none';
     }
@@ -163,11 +181,9 @@ class MenuManager {
       this.telaGameOver.style.display = 'none';
     }
 
-    // Recarrega a página para garantir reset completo
     location.reload();
   }
 
-  // REQUISITO: Pausa o jogo
   pausarJogo() {
     if (confirm('Deseja pausar o jogo e voltar ao menu?')) {
       this.voltarMenu();
@@ -183,11 +199,10 @@ class MenuManager {
       return;
     }
 
-    // Calcula estatísticas
     const tempoSobrevivido = Math.floor((Date.now() - this.tempoInicio) / 1000);
-    const danoCausado = 100 - inimigo.vida;
+    const vidaMaximaInimigo = inimigo?.vidaMaxima > 0 ? inimigo.vidaMaxima : 100;
+    const danoCausado = Math.max(0, Math.round(vidaMaximaInimigo - inimigo.vida));
 
-    // Atualiza conteúdo
     const mensagemGameOver = document.getElementById('mensagemGameOver');
     const tempoSobrevividoSpan = document.getElementById('tempoSobrevivido');
     const danoCausadoSpan = document.getElementById('danoCausado');
@@ -208,21 +223,17 @@ class MenuManager {
       danoCausadoSpan.textContent = danoCausado;
     }
 
-    // Mostra tela
     this.telaGameOver.style.display = 'flex';
   }
 
-  // Abre menu de opções
   abrirOpcoes() {
-    alert('Menu de Opções\n\nControles:\n- Jogador 1: Setas (↑-↓-←-→)\n- Jogador 2: W-A-S-D\n\nConfigurações em desenvolvimento!');
+    window.location.href = 'src/pages/opcoes.htm';
   }
 
-  // Mostra créditos
   mostrarCreditos() {
-    alert('SUPER SAMURAI\n\nDesenvolvido por: Roberto Vinicius\nProjeto: POO em JavaScript\nAno: 2025\n\nObrigado por jogar!');
+    window.location.href = 'src/pages/creditos.html';
   }
 
-  // Limpa o canvas
   limparCanvas() {
     if (typeof canvas !== 'undefined' && typeof c !== 'undefined') {
       c.clearRect(0, 0, canvas.width, canvas.height);
@@ -231,16 +242,13 @@ class MenuManager {
     }
   }
 
-  // Registra dano para estatísticas
   registrarDano(quantidade) {
     this.danoTotal += quantidade;
   }
 }
 
-// Instância global do MenuManager
 const menuManager = new MenuManager();
 
-// Inicializa quando o DOM estiver pronto
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     menuManager.inicializar();

@@ -1,10 +1,8 @@
-// Variáveis globais do jogo (acessíveis pelas classes)
 var canvas, c, gravidade;
 var fundo, loja, jogador, inimigo;
 var teclas, timerSet;
 var animacaoId;
 
-// Inicializa o canvas (sempre disponível)
 canvas = document.querySelector('canvas') || document.getElementById('gameCanvas');
 if (canvas) {
   c = canvas.getContext('2d');
@@ -14,10 +12,8 @@ if (canvas) {
   console.error('Canvas não encontrado! Verifique se há um elemento <canvas> no HTML.');
 }
 
-// Define gravidade padrão (pode ser sobrescrita por níveis)
 gravidade = 0.7;
 
-// Função principal para inicializar o jogo com configurações de nível
 function inicializarJogo(nivelConfig) {
   if (animacaoId) {
     cancelAnimationFrame(animacaoId);
@@ -36,14 +32,12 @@ function inicializarJogo(nivelConfig) {
     imagemSrc: nivelConfig.fundo
   });
 
-  // Carrega loja/decoração (se existir no nível)
   if (nivelConfig.loja) {
     loja = new Entidade(nivelConfig.loja);
   } else {
     loja = null;
   }
 
-  // Carrega configuração do personagem do jogador
   const configJogador = ConfigPersonagens[nivelConfig.jogador.personagem];
   jogador = new Jogador({
     posicao: nivelConfig.jogador.posicao,
@@ -51,10 +45,8 @@ function inicializarJogo(nivelConfig) {
     ...configJogador
   });
 
-  // Carrega configuração do inimigo
   const configInimigo = ConfigPersonagens[nivelConfig.inimigo.personagem];
   
-  // Verifica se é Boss ou Inimigo normal
   if (nivelConfig.inimigo.tipo === "Boss") {
     inimigo = new Boss({
       posicao: nivelConfig.inimigo.posicao,
@@ -69,6 +61,11 @@ function inicializarJogo(nivelConfig) {
     });
   }
 
+  if (jogador && inimigo) {
+    jogador.viradoParaDireita = jogador.posicao.x <= inimigo.posicao.x;
+    inimigo.viradoParaDireita = inimigo.posicao.x < jogador.posicao.x;
+  }
+
   // Inicializa controles
   teclas = {
     ArrowLeft: { pressionada: false },
@@ -81,45 +78,37 @@ function inicializarJogo(nivelConfig) {
     s: { pressionada: false }
   };
 
-  // Reseta barras de vida na UI
   document.getElementById('playerHealth').style.width = '100%';
   document.getElementById('enemyHealth').style.width = '100%';
   
-  // Atualiza textos de vida
   if (typeof atualizarUIVida === "function") {
     atualizarUIVida(jogador, inimigo);
   }
 
-  // Atualiza label do nível
   const nivelLabel = document.getElementById('nivelAtual');
   if (nivelLabel) {
-    nivelLabel.textContent = `NÍVEL ${GameManager.nivelAtual}: ${nivelConfig.nome}`;
+    const possuiGameManager = typeof GameManager !== 'undefined' && GameManager && GameManager.nivelAtual != null;
+    const prefixoNivel = possuiGameManager ? `NÍVEL ${GameManager.nivelAtual}: ` : '';
+    nivelLabel.textContent = `${prefixoNivel}${nivelConfig.nome}`;
   }
 
-  // Inicia timer com tempo específico do nível
   timerSet = temporizador(nivelConfig.tempo);
 
-  // Remove event listeners anteriores
   window.removeEventListener('keydown', handleKeyDown);
   window.removeEventListener('keyup', handleKeyUp);
   
-  // Adiciona novos event listeners
   window.addEventListener('keydown', handleKeyDown);
   window.addEventListener('keyup', handleKeyUp);
 
-  // Inicia loop de animação
   animarPersonagens();
 }
 
-// Função de animação principal
 function animarPersonagens() {
   animacaoId = window.requestAnimationFrame(animarPersonagens);
   
-  // Limpa canvas
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Desenha elementos na ordem correta
   fundo.atualizar();
   
   if (loja) {
@@ -129,11 +118,9 @@ function animarPersonagens() {
   jogador.atualizar();
   inimigo.atualizar();
 
-  // Limita personagens dentro do canvas
   Entidade.limitarNoBounds(jogador, canvas.width);
   Entidade.limitarNoBounds(inimigo, canvas.width);
   
-  // Reseta velocidade horizontal
   jogador.velocidade.x = 0;
   inimigo.velocidade.x = 0;
 
@@ -188,8 +175,9 @@ function animarPersonagens() {
     inimigo.vida -= dano;
     inimigo.receberDano();
     
+    const percentualVidaInimigo = inimigo.vidaMaxima > 0 ? (inimigo.vida / inimigo.vidaMaxima) * 100 : 0;
     gsap.to("#enemyHealth", {
-      width: inimigo.vida + "%"
+      width: `${Math.max(0, Math.min(100, percentualVidaInimigo))}%`
     });
 
     // Atualiza UI de vida
@@ -202,7 +190,6 @@ function animarPersonagens() {
     jogador.estaAtacando = false;
   }
 
-  // Detecção de colisão - Inimigo ataca Jogador
   if (
     colisaoJogador({ rec1: inimigo, rec2: jogador }) &&
     inimigo.estaAtacando &&
@@ -210,16 +197,15 @@ function animarPersonagens() {
   ) {
     inimigo.estaAtacando = false;
     
-    // Dano aumentado se for Boss
     const dano = inimigo instanceof Boss ? 15 : 10;
     jogador.vida -= dano;
     jogador.receberDano();
     
+    const percentualVidaJogador = jogador.vidaMaxima > 0 ? (jogador.vida / jogador.vidaMaxima) * 100 : 0;
     gsap.to("#playerHealth", {
-      width: jogador.vida + "%"
+      width: `${Math.max(0, Math.min(100, percentualVidaJogador))}%`
     });
 
-    // Atualiza UI de vida
     if (typeof atualizarUIVida === "function") {
       atualizarUIVida(jogador, inimigo);
     }
@@ -254,12 +240,6 @@ function handleKeyDown(event) {
         }
         break;
       case "ArrowDown":
-        // Faz jogador olhar para o inimigo ao atacar
-        // if (jogador.posicao.x < inimigo.posicao.x) {
-        //   jogador.viradoParaDireita = true;
-        // } else {
-        //   jogador.viradoParaDireita = false;
-        // }
         jogador.atacar();
         break;
     }
@@ -282,11 +262,6 @@ function handleKeyDown(event) {
         }
         break;
       case "s":
-        // if (inimigo.posicao.x < jogador.posicao.x) {
-        //   inimigo.viradoParaDireita = true;
-        // } else {
-        //   inimigo.viradoParaDireita = false;
-        // }
         inimigo.atacar();
         break;
     }
@@ -316,6 +291,10 @@ function iniciarJogoStandalone() {
   if (typeof GameManager === 'undefined') {
     console.log("Modo Standalone - Configurando jogo direto...");
     
+    if (typeof TrilhaTema !== 'undefined') {
+      TrilhaTema.tocar();
+    }
+
     window.ConfigPersonagens = {
       samuraiX: {
         imagemSrc: "../assets/characters/samuraiX/Idle.png",
@@ -351,11 +330,10 @@ function iniciarJogoStandalone() {
       }
     };
 
-    // Esconde elementos de menu se existirem
-    const menuInicial = document.getElementById('menuInicial');
+    const telaAbertura = document.getElementById('telaAbertura');
     const gameScreen = document.getElementById('gameScreen');
     
-    if (menuInicial) menuInicial.style.display = 'none';
+    if (telaAbertura) telaAbertura.style.display = 'none';
     if (gameScreen) gameScreen.style.display = 'block';
   }
   
@@ -386,18 +364,29 @@ if (document.readyState === 'loading') {
 }
 
 function inicializar() {
-  const menuInicial = document.getElementById('menuInicial');
-  const gameScreen = document.getElementById('gameScreen');
-  
-  if (!menuInicial || typeof GameManager === 'undefined') {
+  const telaAbertura = document.getElementById('telaAbertura');
+  const gameContainer = document.getElementById('gameScreen');
+
+  if (!telaAbertura || !gameContainer) {
     console.log('Iniciando em modo standalone...');
-    
-    if (gameScreen) {
-      gameScreen.style.display = 'block';
-    }
-    
+    if (gameContainer) gameContainer.style.display = 'block';
     iniciarJogoStandalone();
-  } else {
-    console.log('Sistema de menu detectado. Aguardando ação do usuário...');
+    return;
+  }
+
+  console.log('Sistema de menu detectado. Aguardando ação do usuário...');
+  gameContainer.style.display = 'none';
+
+  if (typeof menuManager === 'undefined') {
+    const botaoIniciar = document.getElementById('botaoIniciar');
+
+    if (botaoIniciar && !botaoIniciar.dataset.fallback) {
+      botaoIniciar.dataset.fallback = 'true';
+      botaoIniciar.addEventListener('click', () => {
+        telaAbertura.style.display = 'none';
+        gameContainer.style.display = 'block';
+        iniciarJogoStandalone();
+      });
+    }
   }
 }

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tela de opções do Super Samurai">
+  <title>Opções — Super Samurai</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    body {
+      background: url("../../assets/background/menu.png") center/cover no-repeat fixed;
+      overflow: auto;
+      padding: 40px 20px;
+    }
+
+    .pagina-container {
+      background: rgba(10, 10, 30, 0.85);
+      border: 3px solid rgba(102, 126, 234, 0.6);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 720px;
+      width: 100%;
+      color: #fff;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+      text-align: left;
+    }
+
+    .pagina-titulo {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #f8f9ff;
+      text-shadow: 0 0 25px rgba(102, 126, 234, 0.75);
+    }
+
+    .secao {
+      margin-bottom: 32px;
+    }
+
+    .secao h2 {
+      font-size: 18px;
+      color: #67b7f7;
+      margin-bottom: 15px;
+      text-shadow: 0 0 12px rgba(102, 126, 234, 0.6);
+    }
+
+    .lista-controles {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #dbe2ff;
+      margin-left: 20px;
+      list-style: square;
+    }
+
+    .controle-musica-status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .controle-musica-status span {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(103, 183, 247, 0.15);
+      border: 1px solid rgba(103, 183, 247, 0.45);
+      color: #dff3ff;
+      letter-spacing: 1px;
+    }
+
+    .acoes-pagina {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .menu-button.secondary {
+      background: linear-gradient(135deg, #555 0%, #333 100%);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .menu-button.secondary:hover {
+      background: linear-gradient(135deg, #666 0%, #444 100%);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
+    }
+
+    .observacao {
+      font-size: 12px;
+      color: rgba(223, 243, 255, 0.8);
+      margin-top: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="pagina-container">
+    <h1 class="pagina-titulo">Opções</h1>
+
+    <section class="secao">
+      <h2>Trilha Sonora</h2>
+      <p>Controle a música tema do jogo.</p>
+      <div class="controle-musica-status">
+        <span id="estadoMusica">...</span>
+        <button id="botaoToggleMusica" class="menu-button" type="button">Alternar música</button>
+      </div>
+    </section>
+
+    <section class="secao">
+      <h2>Controles</h2>
+      <p>Relembre os comandos para cada personagem.</p>
+      <h3 style="margin: 16px 0 8px; color: #4ecdc4;">Samurai (Jogador 1)</h3>
+      <ul class="lista-controles">
+        <li><strong>Setas (  →):</strong> mover</li>
+        <li><strong>Seta (↑):</strong> pular</li>
+        <li><strong>Seta (↓):</strong> atacar</li>
+      </ul>
+
+      <h3 style="margin: 24px 0 8px; color: #ff6b6b;">Kenji (Jogador 2)</h3>
+      <ul class="lista-controles">
+        <li><strong>Teclas A / D:</strong> mover</li>
+        <li><strong>Tecla W:</strong> pular</li>
+        <li><strong>Tecla S:</strong> atacar</li>
+      </ul>
+    </section>
+
+    <div class="acoes-pagina">
+      <button id="botaoVoltar" class="menu-button secondary" type="button">Voltar ao menu</button>
+    </div>
+  </main>
+
+  <script src="../utils/Utils.js"></script>
+  <script>
+    (function () {
+      const estadoMusica = document.getElementById('estadoMusica');
+      const botaoToggle = document.getElementById('botaoToggleMusica');
+      const botaoVoltar = document.getElementById('botaoVoltar');
+
+      const atualizarEstado = () => {
+        if (typeof TrilhaTema === 'undefined') {
+          estadoMusica.textContent = 'Indisponível';
+          botaoToggle.disabled = true;
+          return;
+        }
+
+        const habilitada = TrilhaTema.estaHabilitada();
+        estadoMusica.textContent = habilitada ? 'ATIVADA' : 'DESATIVADA';
+        botaoToggle.textContent = habilitada ? 'Desativar música' : 'Ativar música';
+        botaoToggle.setAttribute('aria-pressed', String(habilitada));
+      };
+
+      botaoToggle.addEventListener('click', () => {
+        if (typeof TrilhaTema === 'undefined') {
+          return;
+        }
+
+        TrilhaTema.alternar();
+        atualizarEstado();
+      });
+
+      botaoVoltar.addEventListener('click', () => {
+        window.location.href = '../../index.html';
+      });
+
+      if (typeof TrilhaTema !== 'undefined') {
+        atualizarEstado();
+        TrilhaTema.tocar();
+      } else {
+        atualizarEstado();
+      }
+    })();
+  </script>
+</body>
+
+</html>

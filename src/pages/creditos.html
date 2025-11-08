@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Créditos do jogo Super Samurai">
+  <title>Créditos — Super Samurai</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    body {
+      background: url("../../assets/background/menu.png") center/cover no-repeat fixed;
+      overflow: auto;
+      padding: 40px 20px;
+    }
+
+    .creditos-container {
+      background: rgba(15, 15, 35, 0.88);
+      border: 3px solid rgba(118, 75, 162, 0.6);
+      border-radius: 16px;
+      padding: 50px 40px;
+      max-width: 640px;
+      width: 100%;
+      color: #fff;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+      text-align: center;
+    }
+
+    .creditos-titulo {
+      font-size: 32px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      color: #f8f9ff;
+      text-shadow: 0 0 25px rgba(118, 75, 162, 0.75);
+    }
+
+    .creditos-lista {
+      font-size: 14px;
+      line-height: 2;
+      color: #e0d9ff;
+      margin-bottom: 32px;
+    }
+
+    .menu-button.secondary {
+      background: linear-gradient(135deg, #555 0%, #333 100%);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .menu-button.secondary:hover {
+      background: linear-gradient(135deg, #666 0%, #444 100%);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
+    }
+
+    span {
+      font-weight: bold;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="creditos-container">
+    <h1 class="creditos-titulo">Créditos</h1>
+    <div class="creditos-lista">
+      <p>Projeto desenvolvido por <span>Roberto Vinicius Dantas Batista</span></p>
+      <p>Disciplina: <span>Programação Orientada a Objetos</span></p>
+      <p>Instituição: <span>UFRN</span></p>
+    </div>
+
+    <button id="botaoVoltar" class="menu-button secondary" type="button">Voltar ao menu</button>
+  </main>
+
+  <script src="../utils/Utils.js"></script>
+  <script>
+    (function () {
+      const tentarTocarTrilha = () => {
+        if (typeof TrilhaTema !== 'undefined') {
+          TrilhaTema.tocar();
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', tentarTocarTrilha);
+      } else {
+        tentarTocarTrilha();
+      }
+
+      document.addEventListener('click', tentarTocarTrilha, { once: true });
+      document.addEventListener('keydown', tentarTocarTrilha, { once: true });
+    })();
+
+    document.getElementById('botaoVoltar').addEventListener('click', () => {
+      window.location.href = '../../index.html';
+    });
+  </script>
+</body>
+
+</html>

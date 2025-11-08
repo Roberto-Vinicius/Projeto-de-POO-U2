@@ -11,10 +11,11 @@ class Inimigo extends Entidade {
     framesMax = 1,
     deslocamento = { x: 0, y: 0 },
     sprites,
-    caixaAtaque = { deslocamento: {}, largura: undefined, altura: undefined }
+    caixaAtaque = { deslocamento: {}, largura: undefined, altura: undefined },
+    vidaMaxima = 100
   }) {
     // REQUISITO: Uso do super() - Chamada 2
-    super({ posicao, imagemSrc, escala, framesMax, deslocamento });
+    super({ posicao, imagemSrc, escala, framesMax, deslocamento, vidaMaxima });
     
     // REQUISITO: Novo atributo da classe filha Inimigo
     this.#agressividade = 0.5;
@@ -31,14 +32,20 @@ class Inimigo extends Entidade {
       sprites[sprite].imagem.src = sprites[sprite].imagemSrc;
     }
 
+    const deslocamentoAtaque = caixaAtaque.deslocamento || { x: 0, y: 0 };
+
     this.caixaAtaque = {
       posicao: {
         x: this.posicao.x,
         y: this.posicao.y
       },
-      deslocamento: caixaAtaque.deslocamento,
+      deslocamento: deslocamentoAtaque,
       largura: caixaAtaque.largura,
-      altura: caixaAtaque.altura
+      altura: caixaAtaque.altura,
+      offset: {
+        x: Math.abs(deslocamentoAtaque.x || 0),
+        y: deslocamentoAtaque.y || 0
+      }
     };
 
     this.framesParaSegurar = 4;
@@ -58,8 +65,17 @@ class Inimigo extends Entidade {
       this.animarFrames();
     }
 
-    this.caixaAtaque.posicao.x = this.posicao.x + this.caixaAtaque.deslocamento.x;
-    this.caixaAtaque.posicao.y = this.posicao.y + this.caixaAtaque.deslocamento.y;
+    const offsetAtaque = this.caixaAtaque.offset || { x: 0, y: 0 };
+    const offsetX = offsetAtaque.x || 0;
+    const offsetY = offsetAtaque.y || 0;
+
+    if (this.viradoParaDireita) {
+      this.caixaAtaque.posicao.x = this.posicao.x + offsetX;
+    } else {
+      this.caixaAtaque.posicao.x = this.posicao.x - offsetX - (this.caixaAtaque.largura || 0);
+    }
+
+    this.caixaAtaque.posicao.y = this.posicao.y + offsetY;
     
     this.posicao.x += this.velocidade.x;
     this.posicao.y += this.velocidade.y;

@@ -1,11 +1,12 @@
 // REQUISITO: Herança - Classe 3 que herda
 class Boss extends Inimigo {
   constructor(config) {
-    super(config);
-    
+    const vidaMaximaBoss = config?.vidaMaxima ?? 200;
+    super({ ...config, vidaMaxima: vidaMaximaBoss });
+
     // REQUISITO: Novo atributo da classe filha Boss
-    this.vidaMaxima = 200;
-    this.vida = 200;
+    this.vidaMaxima = vidaMaximaBoss;
+    this.vida = this.vidaMaxima;
     this.danoAumentado = 1.5;
   }
 
