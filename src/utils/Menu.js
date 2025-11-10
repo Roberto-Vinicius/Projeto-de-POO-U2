@@ -10,13 +10,11 @@ class MenuManager {
 
   // REQUISITO: Inicializa o sistema de menu
   inicializar() {
-    // Captura elementos do DOM
     this.telaAbertura = document.getElementById('telaAbertura');
     this.gameScreen = document.getElementById('gameScreen');
     this.telaGameOver = document.getElementById('telaGameOver');
     this.telaResultado = document.getElementById('result');
 
-    // Configura event listeners
     this.configurarBotoes();
     this.configurarTeclado();
     this.inicializarAudioTema();
@@ -26,31 +24,26 @@ class MenuManager {
 
   // REQUISITO: Configura todos os botões do menu
   configurarBotoes() {
-    // Botão Iniciar Jogo
     const botaoIniciar = document.getElementById('botaoIniciar');
     if (botaoIniciar) {
       botaoIniciar.addEventListener('click', () => this.iniciarJogo());
     }
 
-    // Botão Opções
     const botaoOpcoes = document.getElementById('botaoOpcoes');
     if (botaoOpcoes) {
       botaoOpcoes.addEventListener('click', () => this.abrirOpcoes());
     }
 
-    // Botão Créditos
     const botaoCreditos = document.getElementById('botaoCreditos');
     if (botaoCreditos) {
       botaoCreditos.addEventListener('click', () => this.mostrarCreditos());
     }
 
-    // Botão Jogar Novamente
     const restartButton = document.getElementById('restartButton');
     if (restartButton) {
       restartButton.addEventListener('click', () => this.reiniciarJogo());
     }
 
-    // Botões Voltar ao Menu
     const voltarMenuButton = document.getElementById('voltarMenuButton');
     const voltarMenuGameOver = document.getElementById('voltarMenuGameOver');
     
@@ -62,7 +55,6 @@ class MenuManager {
       voltarMenuGameOver.addEventListener('click', () => this.voltarMenu());
     }
 
-    // Botão Tentar Novamente (Game Over)
     const tentarNovamenteButton = document.getElementById('tentarNovamenteButton');
     if (tentarNovamenteButton) {
       tentarNovamenteButton.addEventListener('click', () => this.reiniciarJogo());
@@ -86,7 +78,6 @@ class MenuManager {
   // REQUISITO: Configura controles de teclado
   configurarTeclado() {
     document.addEventListener('keydown', (e) => {
-      // ENTER inicia o jogo na tela de abertura
       if (e.key === 'Enter' && this.telaAbertura && 
           this.telaAbertura.style.display !== 'none') {
         this.iniciarJogo();
@@ -112,21 +103,17 @@ class MenuManager {
       }
     }
 
-    // Esconde tela de abertura
     if (this.telaAbertura) {
       this.telaAbertura.style.display = 'none';
     }
 
-    // Mostra tela do jogo
     if (this.gameScreen) {
       this.gameScreen.style.display = 'block';
     }
 
-    // Reseta estatísticas
     this.tempoInicio = Date.now();
     this.danoTotal = 0;
 
-    // Chama função de inicialização do jogo principal
     if (typeof iniciarJogoStandalone === 'function') {
       iniciarJogoStandalone();
     } else {
@@ -138,17 +125,14 @@ class MenuManager {
   voltarMenu() {
     console.log('Voltando ao menu...');
 
-    // Para a animação do jogo
     if (typeof animacaoId !== 'undefined' && animacaoId) {
       cancelAnimationFrame(animacaoId);
     }
 
-    // Para o timer
     if (typeof timerSet !== 'undefined' && timerSet) {
       clearTimeout(timerSet);
     }
 
-    // Esconde todas as telas de jogo
     if (this.gameScreen) {
       this.gameScreen.style.display = 'none';
     }
@@ -161,12 +145,10 @@ class MenuManager {
       this.telaGameOver.style.display = 'none';
     }
 
-    // Mostra tela de abertura
     if (this.telaAbertura) {
       this.telaAbertura.style.display = 'flex';
     }
 
-    // Reseta o canvas
     this.limparCanvas();
   }
 

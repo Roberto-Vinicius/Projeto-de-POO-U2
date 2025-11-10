@@ -79,9 +79,9 @@ Reduza a barra de vida do oponente a 0 antes que o tempo acabe. Se o cronômetro
 
 ### Controles do Jogador 1 (Samurai)
 
-- **Setas `←` / `→`**: mover para esquerda/direita
-- **Seta `↑`**: pular (apenas no chão)
-- **Seta `↓`**: atacar
+- **Setas `⬅️` / `➡️`**: mover para esquerda/direita
+- **Seta `⬆️`**: pular (apenas no chão)
+- **Seta `⬇️`**: atacar
 
 ### Controles do Jogador 2 (Kenji)
 
