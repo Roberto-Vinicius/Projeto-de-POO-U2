@@ -4,6 +4,7 @@ class Entidade {
   #velocidade;
   #estaAtacando;
 
+  // Cria a posição, imagem e outras propriedades da entidade
   constructor({ posicao, imagemSrc, escala = 1, framesMax = 1, deslocamento = { x: 0, y: 0 }, vidaMaxima = 100 }) {
     this.posicao = posicao;
     this.altura = 150;
@@ -26,6 +27,7 @@ class Entidade {
   }
 
   // REQUISITO: 3 pares de métodos get() e set() (Par 1)
+  // Controla a vida da entidade entre 0 e vidaMaxima
   get vida() {
     return this.#vida;
   }
@@ -36,6 +38,7 @@ class Entidade {
   }
 
   // REQUISITO: 3 pares de métodos get() e set() (Par 2)
+  // Controla a velocidade da entidade
   get velocidade() {
     return this.#velocidade;
   }
@@ -45,6 +48,7 @@ class Entidade {
   }
 
   // REQUISITO: 3 pares de métodos get() e set() (Par 3)
+  // Controla o estado de ataque da entidade
   get estaAtacando() {
     return this.#estaAtacando;
   }
@@ -62,6 +66,7 @@ class Entidade {
   }
 
   // REQUISITO: Método estático 2
+  // Uso pitagórico para calcular a distância entre duas entidades
   static calcularDistancia(entidade1, entidade2) {
     const dx = entidade1.posicao.x - entidade2.posicao.x;
     const dy = entidade1.posicao.y - entidade2.posicao.y;
@@ -78,6 +83,7 @@ class Entidade {
   }
 
   // REQUISITO: Método estático 4
+  // Limita a posição da entidade dentro dos limites do canvas
   static limitarNoBounds(entidade, canvasWidth) {
     if (entidade.posicao.x < 0) {
       entidade.posicao.x = 0;
@@ -87,6 +93,7 @@ class Entidade {
     }
   }
 
+  // Desenha a entidade no canvas
   desenhar() {
 
     c.save(); 
@@ -112,6 +119,7 @@ class Entidade {
     c.restore(); 
   }
 
+  // Anima os frames da entidade
   animarFrames() {
     this.framesDecorridos++;
     if (this.framesDecorridos % this.framesParaSegurar === 0) {

@@ -1,4 +1,4 @@
-// REQUISITO: Herança - Classe 2 que herda
+// REQUISITO: Herança - Classe 2 que herda da Entidade
 class Inimigo extends Entidade {
   // REQUISITO: 3 atributos private em classes distintas (Classe 3)
   #agressividade;
@@ -34,6 +34,7 @@ class Inimigo extends Entidade {
 
     const deslocamentoAtaque = caixaAtaque.deslocamento || { x: 0, y: 0 };
 
+    // Define o alcance do ataque
     this.caixaAtaque = {
       posicao: {
         x: this.posicao.x,
@@ -51,6 +52,8 @@ class Inimigo extends Entidade {
     this.framesParaSegurar = 4;
   }
 
+  // REQUISITO: 3 pares de métodos get() e set() (Par 4)
+  // Controla o nível de agressividade do inimigo entre 0 e 1
   get agressividade() {
     return this.#agressividade;
   }
@@ -59,16 +62,20 @@ class Inimigo extends Entidade {
     this.#agressividade = Math.max(0, Math.min(1, valor));
   }
 
+  // REQUISITO: Polimorfismo - Sobrescrita de método 1
   atualizar() {
     this.desenhar();
+    // Verifica se esta morto antes de animar
     if (!this.morto) {
       this.animarFrames();
     }
 
+    // Passa a posição da caixa de ataque com base na direção que o inimigo está virado
     const offsetAtaque = this.caixaAtaque.offset || { x: 0, y: 0 };
     const offsetX = offsetAtaque.x || 0;
     const offsetY = offsetAtaque.y || 0;
 
+    // Verifica pra qual lado o inimigo está virado
     if (this.viradoParaDireita) {
       this.caixaAtaque.posicao.x = this.posicao.x + offsetX;
     } else {
@@ -76,7 +83,7 @@ class Inimigo extends Entidade {
     }
 
     this.caixaAtaque.posicao.y = this.posicao.y + offsetY;
-    
+
     this.posicao.x += this.velocidade.x;
     this.posicao.y += this.velocidade.y;
 
@@ -106,6 +113,7 @@ class Inimigo extends Entidade {
     this.estaAtacando = true;
   }
 
+  // Define a troca de sprites com base no estado atual do inimigo
   trocarSprite(sprite) {
     if (this.imagem === this.sprites.morte.imagem) {
       if (this.frameAtual === this.sprites.morte.framesMax - 1) {

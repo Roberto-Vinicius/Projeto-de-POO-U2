@@ -1,4 +1,4 @@
-// REQUISITO: Herança - Classe 1 que herda
+// REQUISITO: Herança - Classe 1 que herda da Entidade
 class Jogador extends Entidade {
   // REQUISITO: 3 atributos private em classes distintas (Classe 2)
   #stamina;

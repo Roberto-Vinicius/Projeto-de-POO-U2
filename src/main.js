@@ -3,22 +3,12 @@ var fundo, loja, jogador, inimigo;
 var teclas, timerSet;
 var animacaoId;
 
-canvas = document.querySelector('canvas') || document.getElementById('gameCanvas');
-if (canvas) {
-  c = canvas.getContext('2d');
-  canvas.width = 1024;
-  canvas.height = 576;
-} else {
-  console.error('Canvas não encontrado! Verifique se há um elemento <canvas> no HTML.');
-}
-
-gravidade = 0.7;
-
 function inicializarJogo(nivelConfig) {
   if (animacaoId) {
     cancelAnimationFrame(animacaoId);
   }
 
+  // Configura o canvas
   canvas = document.getElementById('gameCanvas');
   c = canvas.getContext('2d');
   canvas.width = 1024;
@@ -27,17 +17,20 @@ function inicializarJogo(nivelConfig) {
 
   gravidade = nivelConfig.gravidade;
 
+  // Cria entidades do jogo cenario, jogador e inimigo
   fundo = new Entidade({
     posicao: { x: 0, y: 0 },
     imagemSrc: nivelConfig.fundo
   });
 
+  // Cria a loja, se houver
   if (nivelConfig.loja) {
     loja = new Entidade(nivelConfig.loja);
   } else {
     loja = null;
   }
 
+  // Inicia o personagem e pega as configurações
   const configJogador = ConfigPersonagens[nivelConfig.jogador.personagem];
   jogador = new Jogador({
     posicao: nivelConfig.jogador.posicao,
@@ -45,8 +38,10 @@ function inicializarJogo(nivelConfig) {
     ...configJogador
   });
 
+  // pega o template do inimigo e cria o inimigo
   const configInimigo = ConfigPersonagens[nivelConfig.inimigo.personagem];
   
+  // Verifica se é Boss ou Inimigo comum
   if (nivelConfig.inimigo.tipo === "Boss") {
     inimigo = new Boss({
       posicao: nivelConfig.inimigo.posicao,
@@ -61,9 +56,10 @@ function inicializarJogo(nivelConfig) {
     });
   }
 
+  // Define a direção inicial dos personagens
   if (jogador && inimigo) {
     jogador.viradoParaDireita = jogador.posicao.x <= inimigo.posicao.x;
-    inimigo.viradoParaDireita = inimigo.posicao.x < jogador.posicao.x;
+    inimigo.viradoParaDireita = inimigo.posicao.x >= jogador.posicao.x;
   }
 
   // Inicializa controles
@@ -81,15 +77,9 @@ function inicializarJogo(nivelConfig) {
   document.getElementById('playerHealth').style.width = '100%';
   document.getElementById('enemyHealth').style.width = '100%';
   
+  // Atualiza UI de vida
   if (typeof atualizarUIVida === "function") {
     atualizarUIVida(jogador, inimigo);
-  }
-
-  const nivelLabel = document.getElementById('nivelAtual');
-  if (nivelLabel) {
-    const possuiGameManager = typeof GameManager !== 'undefined' && GameManager && GameManager.nivelAtual != null;
-    const prefixoNivel = possuiGameManager ? `NÍVEL ${GameManager.nivelAtual}: ` : '';
-    nivelLabel.textContent = `${prefixoNivel}${nivelConfig.nome}`;
   }
 
   timerSet = temporizador(nivelConfig.tempo);
@@ -106,11 +96,10 @@ function inicializarJogo(nivelConfig) {
 function animarPersonagens() {
   animacaoId = window.requestAnimationFrame(animarPersonagens);
   
+  // Limpa o canvas a cada frame
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
-  
   fundo.atualizar();
-  
   if (loja) {
     loja.atualizar();
   }
@@ -118,6 +107,7 @@ function animarPersonagens() {
   jogador.atualizar();
   inimigo.atualizar();
 
+  // Limita os personagens dentro dos limites do canvas
   Entidade.limitarNoBounds(jogador, canvas.width);
   Entidade.limitarNoBounds(inimigo, canvas.width);
   
@@ -190,6 +180,7 @@ function animarPersonagens() {
     jogador.estaAtacando = false;
   }
 
+  // Uso caixas retangulares para ver se os personagens se acertaram
   if (
     colisaoJogador({ rec1: inimigo, rec2: jogador }) &&
     inimigo.estaAtacando &&
@@ -295,6 +286,7 @@ function iniciarJogoStandalone() {
       TrilhaTema.tocar();
     }
 
+    // Configura personagens disponíveis
     window.ConfigPersonagens = {
       samuraiX: {
         imagemSrc: "../assets/characters/samuraiX/Idle.png",
@@ -337,6 +329,7 @@ function iniciarJogoStandalone() {
     if (gameScreen) gameScreen.style.display = 'block';
   }
   
+  // Passa os dados para incializar o jogo
   const nivelPadrao = {
     nome: "Teste",
     fundo: "../assets/background/cenario1.png",
@@ -364,18 +357,6 @@ if (document.readyState === 'loading') {
 }
 
 function inicializar() {
-  const telaAbertura = document.getElementById('telaAbertura');
-  const gameContainer = document.getElementById('gameScreen');
-
-  if (!telaAbertura || !gameContainer) {
-    console.log('Iniciando em modo standalone...');
-    if (gameContainer) gameContainer.style.display = 'block';
-    iniciarJogoStandalone();
-    return;
-  }
-
-  console.log('Sistema de menu detectado. Aguardando ação do usuário...');
-  gameContainer.style.display = 'none';
 
   if (typeof menuManager === 'undefined') {
     const botaoIniciar = document.getElementById('botaoIniciar');
